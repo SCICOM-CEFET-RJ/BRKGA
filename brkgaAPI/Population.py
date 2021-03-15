@@ -4,9 +4,10 @@ import numpy as np
 
 class Population:
 
-    def __init__(self, population):
+    def __init__(self, object_population):
 
-        self.population = population        
+        self.population = object_population[0]
+        self.fitness = object_population[1]        
 
     @classmethod
     def fromPopulation(cls, p, n):        
@@ -16,31 +17,28 @@ class Population:
 
         return cls([population, fitness])
 
-    def __sortFitness(self):
-        return np.sort(-self.fitness)
+    def _sortFitness(self):
+        return self.fitness.sort(key= lambda tup: -tup[1])
 
-    def __setFitness(self, i, f):
+    def _setFitness(self, i, f):
 
-        self.population[1][i] = (i,f)
+        self.fitness[i] = (i,f)
 
 
-    def __getChromossome(self, i):
+    def _getChromossome(self, i):
         
         try:
-            population = self.population[0]
-            fitness = self.population[1]
-            chromossome = population[fitness[i][0]]
+
+            chromossome = self.population[self.fitness[i][0]]
         
         except AssertionError as error:
-
             print(error)
 
         return chromossome
 
     def __operator(self, i, j):
         
-        population = self.population[0]
-        chromossome = population[i]
+        chromossome = self.population[i]
         allele = chromossome[j]
 
         return allele
@@ -48,9 +46,8 @@ class Population:
     def __vectorOperator(self,i):
 
         try:
-            population = self.population[0]
-            fitness = self.population[1]
-            chromossome = population[fitness[i][0]]
+            
+            chromossome = self.population[self.fitness[i][0]]
         
         except AssertionError as error:
 
@@ -59,26 +56,22 @@ class Population:
         return chromossome       
 
     def getN(self):
-        return np.shape(self.population[0])[1]
+        return np.shape(self.population)[1]
 
     def getP(self):
-        return len(self.population[1])
+        return len(self.population)
 
     def getBestFitness(self):
-        return self.population[1][0][1]
+        return self.fitness[0][1]
 
     def getFitness(self,i):
-        return self.population[1][i][1]
+        return self.fitness[i][1]
     
-    def getChromossome(self, i):
-        
-        try:
-            population = self.population[0]
-            fitness = self.population[1]
-            chromossome = population[fitness[i][0]]
+    def getChromossome(self, i):        
+        try:                        
+            chromossome = self.population[self.fitness[i][0]]
         
         except AssertionError as error:
-
             print(error)
 
         return chromossome
