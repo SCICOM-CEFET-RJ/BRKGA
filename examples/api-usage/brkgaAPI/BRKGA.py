@@ -11,6 +11,7 @@ class BRKGA:
                  pm, # - pm: pct of mutants introduced at each generation into the population
                  rhoe, # - rhoe: probability that an offspring inherits the allele of its elite parent
                  refDecoder, # 
+                 refEvolution,
                  k = 1, # - K: number of independent Populations
                  MAX_Threads = 1): # - MAX_THREADS: number of threads to perform parallel decoding
 
@@ -21,6 +22,7 @@ class BRKGA:
         self.pm = pm * p
         self.rhoe = rhoe
         self.refDecoder = refDecoder
+        self.refEvolution = refEvolution
         self.k = k
         self.MAX_Threads = MAX_Threads
         
@@ -87,7 +89,16 @@ class BRKGA:
 
 
     def evolution(self, current_population, next_population):
-         
+        
+        
+        next_population = self.refEvolution(self.pe,
+                                            self.pm,
+                                            self.n,
+                                            self.rhoe,
+                                            self.p
+                                            )
+        
+        
         i = 0
         j = 0
 
