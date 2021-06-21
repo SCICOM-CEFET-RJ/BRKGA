@@ -1,7 +1,8 @@
 
 from brkgaAPI.BRKGA import BRKGA
 from SampleDecoder import SampleDecoder
-
+from brkgaAPI.StandardBRKGA import StandardBRKGA
+from brkgaAPI.NSGA_II_BRKGA import NSGA_II_BRKGA
 
 
 def main():
@@ -10,7 +11,11 @@ def main():
     
     import pdb; pdb.set_trace()
     decoder = SampleDecoder()
-
+    standard_BRKGA = StandardBRKGA()
+    
+    nsga2_BRKGA = NSGA_II_BRKGA()
+    
+    
     algorithm = BRKGA(n= 10,
                       p = 100,
                       pe = 0.1,
@@ -18,6 +23,7 @@ def main():
                       rhoe = 0.7,
                       k = 3,
                       refDecoder = decoder,
+                      refEvolution = standard_BRKGA,
                       MAX_Threads = 1
                      )
 

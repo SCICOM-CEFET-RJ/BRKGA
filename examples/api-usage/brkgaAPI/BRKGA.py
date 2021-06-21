@@ -26,7 +26,9 @@ class BRKGA:
         self.k = k
         self.MAX_Threads = MAX_Threads
         
-        self.current_population = [Population.fromPopulation(p,n) 
+        
+        
+        self.current_population = [Population.from_Population(p,n) 
                                    for i in range(k)]
         
         
@@ -40,7 +42,7 @@ class BRKGA:
         for i in range(self.k):
             self.initialize(i)
     
-
+    # remove os M piores de uma população e insere M melhores de outra
     def exchangeElite(self, M):
         # inserir checagem de erro
 
@@ -51,11 +53,9 @@ class BRKGA:
 
                 for m in range(M):
                     
-                    bestOfJ = self.current_population[j]._getChromossome(m)
+                    bestOfJ = self.current_population[j].get_individual(m)
                     
-                    self.current_population[i].population[dest] = bestOfJ
-                    
-                    self.current_population[i].fitness[dest] =  (dest,self.current_population[j].fitness[m][1])
+                    self.current_population[i].population[dest] = bestOfJ                    
 
                     dest -= 1
 
@@ -67,10 +67,10 @@ class BRKGA:
       
         for j in range(self.p):
             for k in range(self.n):
-                self.current_population[i].population[j,k] = random.random()    
+                self.current_population[i].population[j].update_allele(k,random.random())    
        
         for j in range(self.p):
-            self.current_population[i]._setFitness(j, self.refDecoder.decode(self.current_population[i].population[j]))
+            self.current_population[i]._setFitness(j, self.refDecoder.decode(self.current_population[i]._getChromossome(j)))
 
        # import pdb; pdb.set_trace()
 
@@ -79,8 +79,7 @@ class BRKGA:
     
     def evolve(self, generations = 1):
         # inserir controle de erro
- 
-        for i in range(1, generations + 1):
+         for i in range(1, generations + 1):
             for j in range(self.k):
                 self.previous_population[j] = self.evolution(self.current_population[j], 
                                                              self.previous_population[j])
@@ -90,53 +89,19 @@ class BRKGA:
 
     def evolution(self, current_population, next_population):
         
+        #import pdb;pdb.set_trace()
+        next_population_evolved = self.refEvolution.evolution(self.pe,
+                                                              self.pm,
+                                                              self.n,
+                                                              self.rhoe,
+                                                              self.p,
+                                                              self.refDecoder,
+                                                              current_population,
+                                                              next_population
+                                                              )
+               
         
-        next_population = self.refEvolution(self.pe,
-                                            self.pm,
-                                            self.n,
-                                            self.rhoe,
-                                            self.p
-                                            )
-        
-        
-        i = 0
-        j = 0
-
-        while i < self.pe:
-            for j in range(self.n):
-                next_population.population[i,j] = current_population.population[current_population.fitness[i][0],j] 
-                
-            next_population.fitness[i] = (i, current_population.fitness[i][1])
-            
-            i += 1
-         
-        while i < (self.p - self.pm):
-
-            eliteParent = random.randint(0,self.pe - 1)
-            noneliteParent = self.pe + random.randint(0, self.p - self.pe - 1)
-
-            for j in range(self.n):
-                
-                sourceParent =  eliteParent if random.random() < self.rhoe else noneliteParent
-                
-                next_population.population[i,j] = current_population.population[current_population.fitness[int(sourceParent)][0], j] 
-                
-                
-            i += 1
-         
-        # We'll introduce 'pm' mutants:
-        while i < self.p:
-            for j in range(self.n):
-                next_population.population[i,j] = random.random()
-            
-            i += 1
-         
-        for i in range(int(self.pe), int(self.p)):
-            next_population.fitness[i] = (i, self.refDecoder.decode(next_population.population[i]))
-         
-        next_population._sortFitness()
-        
-        return deepcopy(next_population)
+        return next_population_evolved
         
 
 
@@ -158,11 +123,11 @@ class BRKGA:
         return self.current_population[bestK].getChromossome(0)
 
     def getBestFitness(self):
-        best = self.current_population[0].fitness[0][1]
+        best = self.current_population[0].getFitness(0)
 
         for i in range(self.k):
-            if self.current_population[i].fitness[0][1] < best :
-                best = self.current_population[i].fitness[0][1]
+            if self.current_population[i].getFitness(0) < best :
+                best = self.current_population[i].getFitness(0)
 
         return best 
 

@@ -1,35 +1,35 @@
 # This class builds the population of chromossomes
 
 import numpy as np
+from Individual import individual
+
 
 class Population:
 
-    def __init__(self, object_population):
+    def __init__(self, population):
 
-        self.population = object_population[0]
-        self.fitness = object_population[1]        
+        self.population = population
 
     @classmethod
-    def fromPopulation(cls, p, n):        
+    def from_Population(cls, p, n):        
         
-        population = np.zeros(shape=(p,n)) 
-        fitness = [(i,0) for i in range(p)]
+        population = [individual(n) for i in range(p)]
 
-        return cls([population, fitness])
+        return cls(population)
 
     def _sortFitness(self):
-        return self.fitness.sort(key= lambda tup: tup[1])
+        return self.population.sort(key= lambda ind: ind.fitness)
 
     def _setFitness(self, i, f):
 
-        self.fitness[i] = (i,f)
+        self.population[i].update_fitness(f)
 
 
     def _getChromossome(self, i):
         
         try:
 
-            chromossome = self.population[self.fitness[i][0]]
+            chromossome = self.population[i].get_chromossome()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
         
         except AssertionError as error:
             print(error)
@@ -38,7 +38,7 @@ class Population:
 
     def __operator(self, i, j):
         
-        chromossome = self.population[i]
+        chromossome = self.population[i].get_chromossome()
         allele = chromossome[j]
 
         return allele
@@ -47,8 +47,8 @@ class Population:
 
         try:
             
-            chromossome = self.population[self.fitness[i][0]]
-        
+            chromossome = self.population[i].get_chromossome()
+
         except AssertionError as error:
 
             print(error)
@@ -56,26 +56,28 @@ class Population:
         return chromossome       
 
     def getN(self):
-        return np.shape(self.population)[1]
+        return len(self.population[0].get_chromossome())
 
     def getP(self):
         return len(self.population)
 
     def getBestFitness(self):
-        return self.fitness[0][1]
+        return self.population[0].get_fitness()
 
     def getFitness(self,i):
-        return self.fitness[i][1]
+        return self.population[i].get_fitness()
     
     def getChromossome(self, i):        
         try:                        
-            chromossome = self.population[self.fitness[i][0]]
+            chromossome = self.population[i].get_chromossome()
         
         except AssertionError as error:
             print(error)
 
         return chromossome
-
+    
+    def get_individual(self, i):
+        return self.population[i]
 
 
 
